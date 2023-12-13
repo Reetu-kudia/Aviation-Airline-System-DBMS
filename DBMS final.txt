@@ -1,0 +1,248 @@
+--------------------CREATION AND INSERTION IN PASSENGER_DETAILS--------------------------------
+
+create table passenger_details
+(
+pid int primary key,
+pname varchar2(25),
+pgender varchar2(10),
+page int,
+pclass varchar2(10)
+);
+
+insert into passenger_details values(1,'Shashank_Gupta','Male',34,'Economy');
+
+insert into passenger_details values(2,'Bala_Shetty','Male',41,'Economy');
+
+insert into passenger_details values(3,'Pooja_Sharma','Female',28,'Business');
+
+insert into passenger_details values(4,'Komal_More','Female',27,'Business');
+
+insert into passenger_details values(5,'Divya_Shetty','Female',29,'First');
+
+insert into passenger_details values(6,'Nidhi_Shetty','Female',21,'First');
+
+insert into passenger_details values(7,'Rahul_Gupta','Male',39,'Economy');
+
+insert into passenger_details values(8,'Priya_Naidu','Female',24,'Economy');
+
+insert into passenger_details values(9,'Prem_Kumar','Male',35,'First');
+
+insert into passenger_details values(10,'Arjun_Allu','Male',24,'Business');
+
+
+
+----------------CREATION AND INSERTION IN TABLE FLYER-----------------------
+
+create table flyer
+(
+pilot_id int primary key,
+pilot_name varchar2(10),
+copilot_id int,
+copilot_name varchar2(10),
+crew_id int,
+crew_name varchar2(10),
+pid int,
+constraint fk_sc
+foreign key(pid) references passenger_details(pid)
+);
+
+insert into flyer values(101,'Faisal',201,'Faiz',301,'Jannat',1);
+
+insert into flyer values(102,'Hasnain',202,'Shadan',302,'Shifa',2);
+
+insert into flyer values(103,'Adnan',203,'Mehraj',303,'Falak',3);
+
+insert into flyer values(104,'Rohit',204,'Rohini',304,'Mohit',4);
+
+insert into flyer values(105,'Tushar',205,'Rajiv',305,'Aarti',5);
+
+insert into flyer values(106,'Nishant',206,'Pratik',306,'Sriti',6);
+
+insert into flyer values(107,'Rohit',207,'Vijay',307,'Rubina',7);
+
+insert into flyer values(108,'Kunal',208,'Elina',308,'Pooja',8);
+
+insert into flyer values(109,'Ericka',209,'Kanika',309,'Aarti',9);
+
+insert into flyer values(110,'Kartik',210,'Rakhi',310,'Kusum',10);
+
+select * from flyer;
+
+
+-------------CREATION AND INSERTION IN TABLE BOOKINGS-----------------------
+
+create table bookings
+(
+flight_id varchar2(10) primary key,
+bid int,
+bname varchar2(10),
+from_location varchar2(10),
+to_location varchar2(10),
+bpayment varchar2(10),
+pilot_id int,
+constraint fk_cs
+foreign key(pilot_id) references flyer(pilot_id)
+);
+
+
+
+insert into bookings values('Ind01',501,'Shweta','Mumbai','Delhi','Googlepay',101);
+
+insert into bookings values('Ind02',502,'Reetu','Ajmer','Mumbai','Phonepay',102);
+
+insert into bookings values('Ind03',503,'laxmi','Jaipur','Indore','Netbanking',103);
+
+insert into bookings values('Go01',504,'Siddhi','Nagpur','Ahmedabad','Netbanking',104);
+
+insert into bookings values('Air01',505,'Riddhi','Chennai','Pune','Wallet',105);
+
+insert into bookings values('Air02',506,'Mansi','Surat','Chandigarh','Creditcard',106);
+
+insert into bookings values('Jet01',507,'Mamta','Goa','Hyderabad','Debitcard',107);
+
+insert into bookings values('Jet02',508,'Aman','Kolhapur','Srinagar','Debitcard',108);
+
+insert into bookings values('Air03',509,'Vishal','Vadodara','Mysuru','Paytm',109);
+
+insert into bookings values('Go02',510,'Aryan','Lucknow','Jalandar','Googlepay',110);
+
+
+---------CREATION AND INSERTION IN TABLE FLIGHT--------------
+
+create table flight
+(
+flight_name varchar2(10),
+avlbl_seats int,
+seat_no varchar2(10),
+price int,
+flight_id varchar2(10),
+constraint fk_fd
+foreign key(flight_id) references bookings(flight_id)
+);
+
+insert into flight values('Indigo',90,'I65',4000,'Ind01');
+
+insert into flight values('Indigo',78,'I23',4300,'Ind02');
+
+insert into flight values('Indigo',85,'I13',3500,'Ind03');
+
+insert into flight values('GoFirst',80,'G45',7600,'Go01');
+
+insert into flight values('AirAsia',100,'A34',5400,'Air01');
+
+insert into flight values('Airasia',75,'A43',5000,'Air02');
+
+insert into flight values('Spicejet',80,'J21',6000,'Jet01');
+
+insert into flight values('Spicejet',95,'J78',6500,'Jet02');
+
+insert into flight values('Airasia',80,'65',8000,'Air03');
+
+insert into flight values('GoFirst',85,'G76',7500,'Go02');
+
+
+
+----------------SELECT*FROM TABLE-----------------------
+
+ select * from passenger_details;
+ select * from flyer;
+ select * from bookings;
+ select * from flight;
+
+---------------QUERIES--------------------------------
+
+Q1)WHO IS PILOT FOR 5TH PASSENGER
+select * from flyer
+where pid=5;
+
+Q2)WHICH FLIGHT IS TAKEN BY WHICH PILOT
+select * from bookings
+where pilot_id=101;
+
+Q3)MAXIMUM SEATS USING SUBQUERY
+select flight_name,max(avlbl_seats)
+from flight
+where avlbl_seats=(select  max(avlbl_seats) from flight)
+group by flight_name;
+
+Q4)MINIMUM SEATS 
+select flight_name,min(avlbl_seats)
+from flight
+where avlbl_seats=(select  min(avlbl_seats) from flight)
+group by flight_name;
+
+Q5)TO FETCH BOOKING DETAILS USING FLIGHT TABLE
+select * from bookings 
+where flight_id=(select flight_id from flight where seat_no='J21');
+
+Q6)WHO WAS THE PILOT FOR THAT PARTICULAR PASSENGER
+select pname,pilot_name
+from passenger_details,flyer
+where passenger_details.pid=flyer.pid;
+
+Q7)NO. OF FLIGHTS
+select flight_name,count(flight_name)
+from flight
+group by flight_name;
+
+Q8)NO. OF FLIGHTS TAKEN BY FEMALES
+select pgender,count(pgender)
+from passenger_details
+where pgender='Female'
+group by pgender;
+
+Q9)BY USING COPILOT NAME WE CAN FETCH THE DATA OF THE PASSENGER WHO FLEW WITH THE COPILOT RAJIV
+(USING SUB-QUERY)
+select * from passenger_details
+where pid=(select pid from flyer where copilot_name='Rajiv');
+
+Q10)HERE WE HAVE CONCATINATE TWO TABLES FLYER AND BOOKINGS TO FETCH THE DETAILS OF 
+BOOKING DETAILS LIKE BID AND NAME WITH THE FLIGHT ID AND THE PILOT WHO FLEW THE FLIGHT WITH THE COPILOT (USING ALIAS)
+select pilot_name,copilot_name,flight_id,bid,bname
+from flyer f,bookings b
+where f.pilot_id=b.pilot_id;
+
+
+Q11)WHO WAS THE PILOT FOR THAT PARTICULAR PASSENGER
+select pname,pilot_name
+from passenger_details,flyer
+where passenger_details.pid=flyer.pid;
+
+Q12)Passenger Details With Second Max Age
+select * from passenger_details
+where page in (select max(page) from passenger_details
+where page not in(select max(page) from passenger_details ));
+
+Q13)Highest Price of  Flight
+select max(price)
+from flight;
+
+Q.14)Highest Price For a Particular  Flight
+select max(price)
+from flight
+where flight_name='Indigo';
+
+Q.15)Total Flight Count(Flight Companies Name)
+select distinct(flight_name)
+from flight;
+
+Q.17)
+select * from flyer
+where pid=(select pid from passenger_details where pname='Bala_Shetty');
+
+Q.18)view 
+create view passenger_flight
+as
+select pas_details.pname,flight.flight_date
+from pas_details,flight
+where pas_details.pseat_no=flight.seat_no;
+
+
+
+
+
+
+
+
+
+
